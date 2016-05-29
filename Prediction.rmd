@@ -42,9 +42,11 @@ Read more: [http://groupware.les.inf.puc-rio.br/har#ixzz49bb9umaP](http://groupw
 
 
 
-## Data Source
+## Data Source and Acquicision
 The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. The train and test datasets are available from the weblinks as follows: 
+
 Train: [https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv]("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+
 Test: [https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv]("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"). 
 
 ```{r}
@@ -79,7 +81,7 @@ In order to predict the pattern of acitvities when the particpants did the exerc
 ```{r}
 # Data preperation
 intrain = createDataPartition(train$X, p = .75) %>% unlist
-sub_train_x = tr_x[intrain,]
+sub_train_x = tr_x[intrain, ]
 sub_train_Y = tr_Y[intrain]
 sub_test_x = tr_x[-intrain, ]
 sub_test_Y = tr_Y[-intrain]
@@ -127,11 +129,3 @@ for(i in seq_along(tr_x)) {levels(te_x[, i]) = levels(tr_x[, i])}
 test.pred = predict(mod, newdata = te_x)
 ```
 *Note: In order to comply with Coursera's Honor Code, the results of the prediection have not been shown intentionally.*
-
-
-
-
-
-
-
-
