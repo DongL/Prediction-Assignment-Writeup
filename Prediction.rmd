@@ -27,11 +27,6 @@ library(DescTools)
 ```
 
 
-```{r data_retrieval, include = F}
-mod = readRDS("/Users/DL/Documents/R project/Github-DongL/Cousera—Practical Machine Learning/model_rf.RDS")
-# saveRDS(mod, 'model_rf.RDS')
-```
-
 
 ## Background
 The report is generated to identify patterns of activities when people perfom excercises. To this end, a random forest model has been constructed using the `caret` r package. The data used in this analsyis were collected from the experiment, in which 6 participants were asked to perform unilateral dumbbell biceps curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E). The human activity recognition device recorded data from accelerometers on the belt, forearm, arm, and dumbell respectively. 
@@ -91,7 +86,7 @@ registerDoMC(cores = detectCores() - 1)
 
 # Train a random forest model  
 trCtl = trainControl(method = "cv", number = 5, allowParallel = T) 
-# mod = train(sub_train_x, sub_train_Y, method = 'rf', trControl = trCtl )
+mod = train(sub_train_x, sub_train_Y, method = 'rf', trControl = trCtl )
 ```
 
 ## Model interpretation 
