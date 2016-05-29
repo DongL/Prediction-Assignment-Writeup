@@ -128,9 +128,11 @@ $(document).ready(function () {
 <p>The report is generated to identify patterns of activities when people perfom excercises. To this end, a random forest model has been constructed using the <code>caret</code> r package. The data used in this analsyis were collected from the experiment, in which 6 participants were asked to perform unilateral dumbbell biceps curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E). The human activity recognition device recorded data from accelerometers on the belt, forearm, arm, and dumbell respectively.</p>
 <p>Read more: <a href="http://groupware.les.inf.puc-rio.br/har#ixzz49bb9umaP" class="uri">http://groupware.les.inf.puc-rio.br/har#ixzz49bb9umaP</a></p>
 </div>
-<div id="data-source" class="section level2">
-<h2>Data Source</h2>
-<p>The data for this project come from this source: <a href="http://groupware.les.inf.puc-rio.br/har" class="uri">http://groupware.les.inf.puc-rio.br/har</a>. The train and test datasets are available from the weblinks as follows: Train: <a href="%22https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv%22">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a> Test: <a href="%22https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv%22">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a>.</p>
+<div id="data-source-and-acquicision" class="section level2">
+<h2>Data Source and Acquicision</h2>
+<p>The data for this project come from this source: <a href="http://groupware.les.inf.puc-rio.br/har" class="uri">http://groupware.les.inf.puc-rio.br/har</a>. The train and test datasets are available from the weblinks as follows:</p>
+<p>Train: <a href="%22https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv%22">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a></p>
+<p>Test: <a href="%22https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv%22">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a>.</p>
 <pre class="r"><code>## Obtain train and test datasets 
 train = read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;)
 test = read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;)</code></pre>
@@ -153,7 +155,7 @@ tr_Y = train[, c(!na_gt_80perc), with = F]$classe</code></pre>
 <p>In order to predict the pattern of acitvities when the particpants did the exercise, a random forest model is trainied using a subset of the train dataset. The remaining data will be used to estimate the out of sample error. Briefly, the above modified train dataset is further split into sub_train and sub_test using the <code>createDataPartition</code> function in the <code>caret</code> package. The sub_train dataset is then used to train a random forest model with 5 fold cross validation to minimize the overfitting problem. Besides, a multicore processing is also applied by allowing the paralle computing implemented in the <code>doMC</code> pacakge</p>
 <pre class="r"><code># Data preperation
 intrain = createDataPartition(train$X, p = .75) %&gt;% unlist
-sub_train_x = tr_x[intrain,]
+sub_train_x = tr_x[intrain, ]
 sub_train_Y = tr_Y[intrain]
 sub_test_x = tr_x[-intrain, ]
 sub_test_Y = tr_Y[-intrain]
@@ -228,33 +230,33 @@ confusionMatrix(sub_test_pred, sub_test_Y) </code></pre>
 
           Reference
 Prediction    A    B    C    D    E
-         A 1400    1    0    0    0
-         B    0  941    0    0    0
-         C    0    1  847    0    0
-         D    0    0    1  811    0
-         E    0    0    0    0  902
+         A 1394    1    0    0    0
+         B    0  936    0    0    0
+         C    0    1  864    0    0
+         D    0    0    0  780    0
+         E    0    0    0    0  928
 
 Overall Statistics
-                                          
-               Accuracy : 0.9994          
-                 95% CI : (0.9982, 0.9999)
-    No Information Rate : 0.2855          
-    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
-                                          
-                  Kappa : 0.9992          
- Mcnemar's Test P-Value : NA              
+                                     
+               Accuracy : 0.9996     
+                 95% CI : (0.9985, 1)
+    No Information Rate : 0.2843     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+                                     
+                  Kappa : 0.9995     
+ Mcnemar's Test P-Value : NA         
 
 Statistics by Class:
 
                      Class: A Class: B Class: C Class: D Class: E
-Sensitivity            1.0000   0.9979   0.9988   1.0000   1.0000
-Specificity            0.9997   1.0000   0.9998   0.9998   1.0000
-Pos Pred Value         0.9993   1.0000   0.9988   0.9988   1.0000
-Neg Pred Value         1.0000   0.9995   0.9998   1.0000   1.0000
-Prevalence             0.2855   0.1923   0.1729   0.1654   0.1839
-Detection Rate         0.2855   0.1919   0.1727   0.1654   0.1839
-Detection Prevalence   0.2857   0.1919   0.1729   0.1656   0.1839
-Balanced Accuracy      0.9999   0.9989   0.9993   0.9999   1.0000</code></pre>
+Sensitivity            1.0000   0.9979   1.0000   1.0000   1.0000
+Specificity            0.9997   1.0000   0.9998   1.0000   1.0000
+Pos Pred Value         0.9993   1.0000   0.9988   1.0000   1.0000
+Neg Pred Value         1.0000   0.9995   1.0000   1.0000   1.0000
+Prevalence             0.2843   0.1913   0.1762   0.1591   0.1892
+Detection Rate         0.2843   0.1909   0.1762   0.1591   0.1892
+Detection Prevalence   0.2845   0.1909   0.1764   0.1591   0.1892
+Balanced Accuracy      0.9999   0.9989   0.9999   1.0000   1.0000</code></pre>
 </div>
 <div id="prediction-on-the-test-dataset" class="section level2">
 <h2>Prediction on the test dataset</h2>
