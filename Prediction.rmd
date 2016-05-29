@@ -70,7 +70,7 @@ tr_Y = train[, c(!na_gt_80perc), with = F]$classe
 
 
 ## Train a random forest model
-In order to predict the pattern of acitvities when the particpants did the exercise, a random forest model is trainied using a subset of the train dataset. The remaining data will be used to estimate the out of sample error. Briefly, the above modified train dataset is further split into sub_train and sub_test using the `createDataPartition` function in the `caret` package. The sub_train dataset is then used to train a random forest model with 5 fold cross validation to minimize the overfitting problem. Besides, a multicore processing is also applied by allowing the paralle computing implemented in the `doMC` pacakge
+In order to predict the pattern of acitvities when the particpants did the exercise, a random forest model is trainied using a subset of the train dataset. The remaining data will be used to estimate the out of sample error. Briefly, the above modified train dataset is further split into sub_train and sub_test using the `createDataPartition` function in the `caret` package. The sub_train dataset is then used to train a random forest model with 5 fold cross validation to minimize the overfitting problem. Besides, a multicore processing is also applied by allowing the parallel computing implemented in the `doMC` package
 
 
 ```{r}
