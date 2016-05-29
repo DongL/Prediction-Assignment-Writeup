@@ -1,0 +1,127 @@
+---
+title: "Prediction Assignment Writeup"
+author: "Dong Liang"
+date: "May 16, 2016"
+output: 
+  html_document: 
+    theme: cerulean
+---
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(message = F, error = F, warning = F, comment = NA, fig.align = 'center', dpi = 100, tidy = F, cache.path = '.cache/', fig.path = 'fig/')
+
+```
+
+```{r}
+## Load up packages -------------------------------------------------------------------
+library(caret)
+library(ggplot2)
+library(magrittr)
+library(data.table)
+library(dplyr)
+library(doMC)
+library(DescTools)
+```
+
+
+
+
+
+## Background
+The report is generated to identify patterns of activities when people perfom excercises. The data used were collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
+
+In the experiment, the 6 participants were asked to perform unilateral dumbbell biceps curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E). The human activity recognition device recoded data from accelerometers on the belt, forearm, arm, and dumbell. 
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz49bb9umaP
+
+when wearing XXX which recored
+
+
+
+## Data Acquisition
+In order to predict the pattern of acitvities when they did the exercise, a random forest model was built using the training dataset. The training and test data are downloade directly from the weblink as follows: [Training](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv), [Testing]("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv").
+
+```{r}
+## Load up train and test datasets -------------------------------------------------------------------
+train = read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+test = read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
+```
+
+
+
+## Data Cleaning and Preprocessing
+
+```{r}
+# Find the variable columes that contain more that 80% NAs or empty values. Those data may probably not be useful for modeling due to the limited info provided. 
+setDT(train)
+setDT(test)
+na_gt_80perc = train[, lapply(.SD, function(c) ((is.na(c) | c == "" ) %>% sum)/length(c)) > 0.8]
+
+# Remove the index variable - X, outcome varaible(Y) - classe and the problem id - problem_id from train and test datasets 
+tr_x = train[, c(!na_gt_80perc), with = F] %>% select(-classe, -X) 
+te_x = test[, c(!na_gt_80perc), with = F] %>% select(-problem_id, -X) 
+tr_Y = train[, c(!na_gt_80perc), with = F]$classe
+
+```
+
+The original train dataset has `r dim(train)[2]` variables, but unfortunately, not all of the features recorded are useful for building a random forest model due to the high percentatge of NA and empty values. Besides, the index varaible- X and outcome variable - classe should also be excluded from predictor features. After clearning up, I keep the following features: *`r names(tr)`*  
+
+
+## Train a random forest model
+I first use the trimmed train dataset and further split it into sub_train and sub_test using the `createDataPartition` function in the caret package. The sub_train dataset is used to train a random forest model with 5 fold cross validation.
+
+```{r}
+# Data preperation
+intrain = createDataPartition(train$X, p = .75) %>% unlist
+sub_train_x = tr_x[intrain,]
+sub_train_Y = tr_Y[intrain]
+sub_test_x = tr_x[-intrain, ]
+sub_test_Y = tr_Y[-intrain]
+
+# register multi-cores using DoMC package 
+registerDoMC(cores = detectCores() - 1)  
+
+# Train a random forest model  
+trCtl = trainControl(method = "cv", number = 5, allowParallel = T) 
+mod = train(sub_train_x, sub_train_Y, method = 'rf', trControl = trCtl )
+
+```
+
+## Model interpretation
+The variable importance is shown 
+```{r}
+varImp(mod)
+varImpPlot(mod$finalModel, type = 2)
+
+mod$finalModel$importance
+```
+
+
+## Prediction on the sub_test dataset
+```{r}
+# Prediction
+sub_test_pred = predict(mod, sub_test_x)
+
+# Confusion Matrix
+confusionMatrix(sub_test_pred, sub_test_Y)
+```
+
+I further predict the outcomes of sub_test dataset and estmate the out of sample error using `confusionMatrix` in caret package. As shown above, the trained random forest model successfully predicts the classe varaible with an overall accuracy of 0.999. 
+
+
+## Prdiction on the test dataset
+```{r}
+# Complement the lacking level information to the 20 test cases
+setDF(te_x); setDF(tr_x)
+for(i in seq_along(tr_x)) {levels(te_x[, i]) = levels(tr_x[, i])}
+
+# Prediction on the test dataset      
+test.pred = predict(mod, newdata = te_x)
+```
+
+
+
