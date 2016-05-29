@@ -1,5 +1,5 @@
 ---
-title: "Prediciotn of Activity Patterns Using a Random Forest Model"
+title: "Prediciotn of Activity Patterns Using a Random Forest Model "
 author: "Dong Liang"
 date: "May 16, 2016"
 output: 
@@ -40,14 +40,10 @@ mod = readRDS("/Users/DL/Documents/R project/Github-DongL/Cousera—Practical Ma
 
 
 
-
-
-
-
-
-
 ## Background
-The report is generated to identify patterns of activities when people perfom excercises. The data used were collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
+The report is generated to identify patterns of activities when people perfom excercises. The data used in this analsyis were 
+
+collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. 
 
 In the experiment, the 6 participants were asked to perform unilateral dumbbell biceps curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E). The human activity recognition device recoded data from accelerometers on the belt, forearm, arm, and dumbell. 
 
