@@ -42,7 +42,7 @@ Read more: [http://groupware.les.inf.puc-rio.br/har#ixzz49bb9umaP](http://groupw
 
 
 
-## Data Source and Acquicision
+## Data Source and Acquisition
 The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. The train and test datasets are available from the weblinks as follows: 
 
 Train: [https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv]("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
