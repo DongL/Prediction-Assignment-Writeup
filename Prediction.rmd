@@ -57,7 +57,7 @@ test = read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing
 The original train dataset contains `r dim(train)[2]` variables, but unfortunately, many features recorded in this project are not useful for building a random forest model due to the high percentatge of NA and empty values. Besides, the index varaible - X and response variable - classe(Y) should also be excluded to create predictor features(x). After clearning up, the predictors to be used for model training are: *`r names(tr_x)`*  
 
 ```{r data prep}
-# Find the variable columes that contain more that 80% NAs or empty values. Those data may probably not be useful for modeling due to the limited info and varaibility they bear.  
+# Find the variable columes that contain more that 80% NAs or empty values. Those data may probably not be useful for modeling due to the limited info and variability they bear.  
 setDT(train)
 setDT(test)
 na_gt_80perc = train[, lapply(.SD, function(c) ((is.na(c) | c == "" ) %>% sum)/length(c)) > 0.8]
