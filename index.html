@@ -220,7 +220,7 @@ magnet_belt_x          2.458</code></pre>
 </div>
 <div id="prediction-on-the-sub_test-dataset" class="section level2">
 <h2>Prediction on the sub_test dataset</h2>
-<p>I further predict the outcomes of sub_test dataset and estmate the out of sample error using <code>confusionMatrix</code> in caret package. As shown below, the trained random forest model successfully predicts the <code>classe</code> variable with an overall accuracy of 0.999.</p>
+<p>I further predict the outcomes of sub_test dataset and estmate the out of sample error using <code>confusionMatrix</code> in caret package. As shown below, the trained random forest model successfully predicts the <code>classe</code> variable with an overall accuracy of 0.9996. The out of sample error is thus estimated to be 0.04%.</p>
 <pre class="r"><code># Prediction
 sub_test_pred = predict(mod, sub_test_x)
 
