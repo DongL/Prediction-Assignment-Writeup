@@ -103,7 +103,7 @@ varImpPlot(mod$finalModel, type = 2)
 
 ```
 
-I further predict the outcomes of sub_test dataset and estmate the out of sample error using `confusionMatrix` in caret package. As shown below, the trained random forest model successfully predicts the `classe` variable with an overall accuracy of 0.999. 
+I further predict the outcomes of sub_test dataset and estmate the out of sample error using `confusionMatrix` in caret package. As shown below, the trained random forest model successfully predicts the `classe` variable with an overall accuracy of 0.9996. The out of sample error is thus estimated to be `r 100 * (1-0.9996)`%. 
 
 ```{r prediction}
 # Prediction
