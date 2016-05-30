@@ -103,13 +103,21 @@ mod = train(sub_train_x, sub_train_Y, method = 'rf', trControl = trCtl )
 ```
 
 ## Model interpretation 
-The random forest model, unlike linear regression model, is trained on bagged data using randomly selected featrues to build a large number of decision trees. This makes internal logic for decision process like a black box. To get intrinsic insight into the constructed random forest model, the order of variable importance is shown as follows: 
 
-```{r}
-mod
+The random forest model, unlike linear regression model, is trained on bagged data using randomly selected featrues to build a large number of decision trees. This makes internal logic for decision process like a black box. To get intrinsic insight into the constructed random forest model, the order of variable importance is shown below. 
+
+```{r Model interpretation}
+# Variable Importance:
 varImp(mod)
 varImpPlot(mod$finalModel, type = 2)
+
+# Out of sample error based on the optimal model from cross validation:
+mod
+out_of_sample_erro = round(100 * (1 - max(mod$results$Accuracy)), 3)
+out_of_sample_erro
 ```
+Besides, the out of sample error based on the optimal model selected from cross validation is `r out_of_sample_erro`%. 
+
 
 ## Prediction on the sub_test dataset
 ```{r ref.label= 'prediction', include=F}
