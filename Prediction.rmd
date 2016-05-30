@@ -54,7 +54,14 @@ test = read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing
 ```{r ref.label= 'data prep', include=F}
 
 ```
-The original train dataset contains `r dim(train)[2]` variables, but unfortunately, many features recorded in this project are not useful for building a random forest model due to the high percentatge of NA and empty values. Besides, the index varaible - X and response variable - classe(Y) should also be excluded to create predictor features(x). After clearning up, the predictors to be used for model training are: *`r names(tr_x)`*  
+The original train dataset contains `r dim(train)[2]` variables, but not all of them are suitbable for model construction.
+
+- Many features recorded in this project are not useful for building a random forest model due to the high percentatge of NA and empty values. They are chosed to be removed.
+- The near zero-variance variables identified by `nearZeroVar` function are elimiated prior to modeling. 
+- Besides, the index varaible - X and response variable - classe(Y) should also be excluded to create predictor features(x). 
+
+After clearning up, the predictors to be used for model training are: *`r names(tr_x)`*  
+
 
 ```{r data prep}
 # Find the variable columes that contain more that 80% NAs or empty values. Those data may probably not be useful for modeling due to the limited info and variability they bear.  
@@ -62,10 +69,16 @@ setDT(train)
 setDT(test)
 na_gt_80perc = train[, lapply(.SD, function(c) ((is.na(c) | c == "" ) %>% sum)/length(c)) > 0.8]
 
-# Remove the index variable - X, response varaible(Y) - classe and the problem id - problem_id from train and test datasets 
-tr_x = train[, c(!na_gt_80perc), with = F] %>% select(-classe, -X) 
-te_x = test[, c(!na_gt_80perc), with = F] %>% select(-problem_id, -X) 
-tr_Y = train[, c(!na_gt_80perc), with = F]$classe
+# Find the near zero-variance variables 
+nzv = nearZeroVar(train, saveMetrics = T)
+
+toRemove = na_gt_80perc | nzv$nzv
+
+# Data preprocssing and feature selection
+tr_x = train[, c(!toRemove), with = F] %>% select(-classe, -X) 
+te_x = test[, c(!toRemove), with = F] %>% select(-problem_id, -X) 
+tr_Y = train[, c(!toRemove), with = F]$classe
+
 ```
 
 
@@ -103,14 +116,16 @@ varImpPlot(mod$finalModel, type = 2)
 
 ```
 
-I further predict the outcomes of sub_test dataset and estmate the out of sample error using `confusionMatrix` in caret package. As shown below, the trained random forest model successfully predicts the `classe` variable with an overall accuracy of 0.9996. The out of sample error is thus estimated to be `r 100 * (1-0.9996)`%. 
+I further predict the outcomes of sub_test dataset and estmate the out of sample error using `confusionMatrix` in caret package. As shown below, the trained random forest model successfully predicts the `classe` variable with an overall accuracy of `r accuracy` The out of sample error is thus estimated to be `r 100 * (1-accuracy)`%. 
 
 ```{r prediction}
 # Prediction
 sub_test_pred = predict(mod, sub_test_x)
 
-# Confusion Matrix
-confusionMatrix(sub_test_pred, sub_test_Y) 
+# Confusion Matrix 
+confusion_matrix = confusionMatrix(sub_test_pred, sub_test_Y) 
+confusion_matrix
+accuracy = round(confusion_matrix$overall[1], 4)
 ```
 
 
